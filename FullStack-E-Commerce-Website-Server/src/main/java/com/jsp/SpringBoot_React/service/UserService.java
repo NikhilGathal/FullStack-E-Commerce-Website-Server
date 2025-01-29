@@ -63,20 +63,20 @@ public class UserService {
 	}
 
 	// Update User Details (Only allow email change, other details can be updated)
-	public User updateUser(Long id, User user) {
-		Optional<User> existingUser = userRepository.findById(id);
-		if (existingUser.isPresent()) {
-			User updatedUser = existingUser.get();
-			if (!updatedUser.getEmail().equals(user.getEmail())) {
-				updatedUser.setEmail(user.getEmail());
-			}
-			updatedUser.setUsername(user.getUsername());
-			updatedUser.setPhone(user.getPhone());
-			updatedUser.setAddress(user.getAddress());
-			return userRepository.save(updatedUser);
-		}
-		throw new RuntimeException("User not found");
-	}
+//	public User updateUser(Long id, User user) {
+//		Optional<User> existingUser = userRepository.findById(id);
+//		if (existingUser.isPresent()) {
+//			User updatedUser = existingUser.get();
+//			if (!updatedUser.getEmail().equals(user.getEmail())) {
+//				updatedUser.setEmail(user.getEmail());
+//			}
+//			updatedUser.setUsername(user.getUsername());
+//			updatedUser.setPhone(user.getPhone());
+//			updatedUser.setAddress(user.getAddress());
+//			return userRepository.save(updatedUser);
+//		}
+//		throw new RuntimeException("User not found");
+//	}
 
 	// Forgot Password - Send reset password email link
 	public String forgotPassword(String username) {

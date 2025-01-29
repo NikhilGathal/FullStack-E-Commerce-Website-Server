@@ -126,28 +126,93 @@ public class UserController {
 
 	}
 
+//	@PutMapping("/{id}")
+//	public ResponseEntity<User> updateUserById(@PathVariable Long id, @RequestBody User updatedUser) {
+//		System.out.println("id " + id);
+//		System.out.println("add is " + updatedUser.getAddress());
+//		Optional<User> userOpt = userRepository.findById(id); // Search by ID
+//		if (userOpt.isPresent()) {
+//			User existingUser = userOpt.get();
+//
+//			// Update fields
+//			existingUser.setUsername(updatedUser.getUsername());
+//			existingUser.setPassword(updatedUser.getPassword());
+//			existingUser.setPhone(updatedUser.getPhone());
+//			existingUser.setEmail(updatedUser.getEmail());
+//			existingUser.setAddress(updatedUser.getAddress());
+//			existingUser.setIsAdmin(updatedUser.getIsAdmin());
+//			System.out.println("updated success ");
+//			userRepository.save(existingUser); // Save updated user
+//			return ResponseEntity.ok(existingUser);
+//		} else {
+//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//		}
+//	}
+	
+	
+	
+	
+	
+	
+	
 	@PutMapping("/{id}")
-	public ResponseEntity<User> updateUserById(@PathVariable Long id, @RequestBody User updatedUser) {
-		System.out.println("id " + id);
-		System.out.println("add is " + updatedUser.getAddress());
-		Optional<User> userOpt = userRepository.findById(id); // Search by ID
-		if (userOpt.isPresent()) {
-			User existingUser = userOpt.get();
+	public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+	    Optional<User> existingUserOpt = userRepository.findById(id);
+	    
+	    if (!existingUserOpt.isPresent()) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+	    }
 
-			// Update fields
-			existingUser.setUsername(updatedUser.getUsername());
-			existingUser.setPassword(updatedUser.getPassword());
-			existingUser.setPhone(updatedUser.getPhone());
-			existingUser.setEmail(updatedUser.getEmail());
-			existingUser.setAddress(updatedUser.getAddress());
-			existingUser.setIsAdmin(updatedUser.getIsAdmin());
-			System.out.println("updated success ");
-			userRepository.save(existingUser); // Save updated user
-			return ResponseEntity.ok(existingUser);
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		}
+	    User existingUser = existingUserOpt.get();
+
+	    // Check if the updated username or email already exists in another user
+	    Optional<User> existingUserWithSameUsername = userRepository.findByUsername(updatedUser.getUsername());
+	    Optional<User> existingUserWithSameEmail = userRepository.findByEmail(updatedUser.getEmail());
+
+	    if (existingUserWithSameUsername.isPresent() && !existingUserWithSameUsername.get().getId().equals(id)) {
+	        return ResponseEntity.status(HttpStatus.CONFLICT).body("{\"username\": \"Username already exists\"}");
+	    }
+
+	    if (existingUserWithSameEmail.isPresent() && !existingUserWithSameEmail.get().getId().equals(id)) {
+	        return ResponseEntity.status(HttpStatus.CONFLICT).body("{\"email\": \"Email already exists\"}");
+	    }
+
+	    // Update user details
+	    existingUser.setUsername(updatedUser.getUsername());
+	    existingUser.setPassword(updatedUser.getPassword());
+	    existingUser.setPhone(updatedUser.getPhone());
+	    existingUser.setEmail(updatedUser.getEmail());
+	    existingUser.setAddress(updatedUser.getAddress());
+	    existingUser.setIsAdmin(updatedUser.getIsAdmin());
+
+	    userRepository.save(existingUser);
+	    
+	    return ResponseEntity.ok(existingUser);
 	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	@DeleteMapping("/username/{username}")
 	public ResponseEntity<String> deleteUserByUsername(@PathVariable String username) {
