@@ -101,7 +101,16 @@ public class CartService {
 			userRepository.save(user);
 		}
 	}
+	@Transactional
+	public CartItem getCartItem(Long userId, Long productId) {
+	    User user = userRepository.findById(userId)
+	        .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
+	    return user.getCartItems().stream()
+	        .filter(item -> item.getProduct().getId().equals(productId))
+	        .findFirst()
+	        .orElse(null); // return null if not found
+	}
 	
 
 }

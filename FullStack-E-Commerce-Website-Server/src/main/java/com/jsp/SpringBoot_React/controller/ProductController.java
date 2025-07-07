@@ -66,4 +66,10 @@ public class ProductController {
 		List<Product> products = productService.getAllProducts();
 		return ResponseEntity.ok(products);
 	}
+	
+	@PutMapping("/stock/{id}/{delta}")
+	public ResponseEntity<Product> updateProductStock(@PathVariable Long id, @PathVariable int delta) {
+	    Product updated = productService.updateStock(id, delta);
+	    return ResponseEntity.ok(updated);
+	}
 }

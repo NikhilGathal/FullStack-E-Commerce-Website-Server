@@ -6,7 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.jsp.SpringBoot_React.entity.CartItem;
+import com.jsp.SpringBoot_React.entity.Product;
 import com.jsp.SpringBoot_React.entity.User;
+import com.jsp.SpringBoot_React.repo.ProductRepository;
 import com.jsp.SpringBoot_React.repo.UserRepository;
 import com.jsp.SpringBoot_React.service.CartService;
 
@@ -21,10 +23,25 @@ public class CartController {
 
 	@Autowired
 	private CartService cartService;
+	
+	@Autowired
+	private ProductRepository productRepository;
 
 	@PostMapping("/add")
 	public ResponseEntity<String> addToCart(@RequestParam Long userId, @RequestParam Long productId,
 			@RequestParam int quantity) {
+		
+		 User user = userRepository.findById(userId).orElseThrow();
+		    Product product = productRepository.findById(productId).orElseThrow();
+		    
+
+		    int availableStock = product.getRating().getCount();
+
+		    if (availableStock < quantity) {
+		        throw new RuntimeException("Product is out of stock or insufficient stock available.");
+		    }
+		
+		
 		System.out.println(userId + "  " + productId + " " + quantity);
 		cartService.addToCart(userId, productId, quantity);
 		return ResponseEntity.ok("Product added to cart");
@@ -54,6 +71,12 @@ public class CartController {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 		return ResponseEntity.ok(user.getCartItems());
+	}
+	
+	@GetMapping("/item")
+	public ResponseEntity<CartItem> getCartItem(@RequestParam Long userId, @RequestParam Long productId) {
+	    CartItem item = cartService.getCartItem(userId, productId);
+	    return item != null ? ResponseEntity.ok(item) : ResponseEntity.notFound().build();
 	}
 
 }

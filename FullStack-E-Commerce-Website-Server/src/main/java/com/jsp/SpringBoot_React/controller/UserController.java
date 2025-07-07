@@ -34,7 +34,7 @@ public class UserController {
 
 	@Autowired
 	private UserRepository userRepository;
-
+	
 	@GetMapping("/{username}")
 	public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
 		// Fetch user along with cartItems and their associated products (eagerly

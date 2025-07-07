@@ -82,7 +82,13 @@ public class ProductService {
     }
 
     
-    
+    public Product updateStock(Long id, int delta) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        int newCount = product.getRating().getCount() + delta;
+        if (newCount < 0) newCount = 0;
+        product.getRating().setCount(newCount);
+        return productRepository.save(product);
+    }
     
     
     
